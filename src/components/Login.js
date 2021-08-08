@@ -23,6 +23,7 @@ function Login() {
         const result = await res.json();
         if (res.status === 200) {
             localStorage.setItem('token', result.token)
+            localStorage.setItem('username', result.user)
             history.push('/main');
             toast({
                 title: "Login Successful.",

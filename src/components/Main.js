@@ -2,8 +2,10 @@ import { Avatar, Box, Button, Divider, Flex, Image, Popover, PopoverArrow, Popov
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { API_URL } from "../CONSTANTS";
+import qs from 'querystring'
 
 function Main() {
+    const username = localStorage.getItem('username')
     const toast = useToast();
     const [courses, setCourses] = useState([]);
     const history = useHistory();
@@ -44,6 +46,7 @@ function Main() {
             },
 
         });
+        localStorage.clear();
         history.replace('/')
 
     }
@@ -58,7 +61,7 @@ function Main() {
 
                         <Flex align="center" cursor="pointer" role="button">
                             <Avatar mr="15px"></Avatar>
-                            <Text fontWeight="bold" fontSize="20px">{localStorage.getItem('username')}</Text>
+                            <Text fontWeight="bold" fontSize="20px">{username}</Text>
                         </Flex>
                     </PopoverTrigger>
                     <PopoverContent width="120px">
@@ -79,14 +82,22 @@ function Main() {
                                 transform: "scale(1.05)"
                             }}>
                                 <Box>
-                                    <Image src={el.thumbnailURL}></Image>
+                                    <Image src={el.thumbnailURL} objectFit="contain" height="100%"></Image>
                                 </Box>
                                 <Flex p={4} direction="column" justify="space-between">
                                     <Text fontWeight="semibold" fontSize="20px" h="40%">{el.title}</Text>
                                     <Divider />
-                                    <Text fontWeight="semibold" fontSize="20px">{el.price}</Text>
+                                    <Text fontWeight="semibold" fontSize="20px">₹ {el.price}</Text>
                                     <Divider />
-                                    <Button colorScheme="messenger">Buy Now</Button>
+                                    <Button colorScheme="messenger" onClick={() => {
+                                        const str = qs.encode({
+                                            id: el.id,
+                                            user: username,
+                                            price: el.price
+                                        });
+                                        console.log(str);
+                                        history.push('/payment?' + str)
+                                    }}>Buy Now</Button>
                                 </Flex>
                             </Flex>
                         </Flex>)}
